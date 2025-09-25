@@ -33,9 +33,11 @@ def create_table():
 
     except Exception as e:
         messagebox.showerror("Database Error", str(e))
+        
 
         
 def submit_details():
+     
     name = entry_name.get()
     age = entry_age.get()
     gender = gender_var.get()
@@ -66,8 +68,52 @@ def submit_details():
         
     except Exception as e:
         messagebox.showerror("Database Error", str(e))
+
+
+def search_employee():
+    id = entry_id.get()
+    entry_id.config(state='normal')
+    if not id:
+        messagebox.showwarning("Input Error", "Please enter Employee ID to search")
+        return
+
+    try:
+        conn = mysql.connector.connect(
+            host=DB_HOST,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=DB_NAME
+        )
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM employee_db WHERE id = %s", (id,))
+        row = cur.fetchone()
+        conn.close()
+
+        if row:
+           
+            entry_name.delete(0, tk.END)
+            entry_name.insert(0, row[1])
+
+            entry_age.delete(0, tk.END)
+            entry_age.insert(0, row[2])
+
+            gender_var.set(row[3])
+
+            entry_dept.delete(0, tk.END)
+            entry_dept.insert(0, row[4])
+
+            entry_salary.delete(0, tk.END)
+            entry_salary.insert(0, row[5])
+
+            messagebox.showinfo("Record Found", "Employee details loaded for editing")
+        else:
+            messagebox.showwarning("Not Found", "No employee found with this ID")
+
+    except Exception as e:
+        messagebox.showerror("Database Error", str(e))        
         
 def clear_form():
+    entry_id.delete(0, tk.END)
     entry_name.delete(0, tk.END)
     entry_age.delete(0, tk.END)
     gender_var.set("Male")
@@ -84,6 +130,10 @@ tk.Label(root, text="Employee Details Form", font=("Georgia", 16, "bold")).pack(
 
 frame = tk.Frame(root)
 frame.pack(pady=10)
+
+tk.Label(frame, text="Employee ID:",state='disabled').grid(row=5, column=0, sticky="w", padx=5, pady=5)
+entry_id = tk.Entry(frame, width=25)
+entry_id.grid(row=5, column=1)
 
 tk.Label(frame, text="Name:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
 entry_name = tk.Entry(frame, width=25)
@@ -111,6 +161,8 @@ btn_frame.pack(pady=10)
 
 tk.Button(btn_frame, text="Submit", command=submit_details, width=10, bg="green", fg="white").grid(row=0, column=0, padx=5)
 tk.Button(btn_frame, text="Clear", command=clear_form, width=10, bg="red", fg="white").grid(row=0, column=1, padx=5)
+tk.Button(btn_frame, text="Edit", command=search_employee, width=10, bg="light blue", fg="white").grid(row=0, column=2, padx=5)
+
 
 create_table()
 root.mainloop()    
