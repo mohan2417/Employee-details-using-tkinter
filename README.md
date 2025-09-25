@@ -2,7 +2,7 @@
 Employee Details Management (Tkinter + MySQL)
 
 This project is a simple Employee Details Management System built using Python Tkinter for the GUI and MySQL  as the database.
-It allows users to enter, view, and manage employee information with an easy-to-use form-based interface.
+It allows users to enter, view, edit  and manage employee information with an easy-to-use form-based interface.
 
 🚀 Features
 
